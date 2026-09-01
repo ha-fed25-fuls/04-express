@@ -28,10 +28,26 @@ app.get('/', (req: Request, res: Response): void => {
 	// res används för att skicka ett svar till klienten
     res.status(200).send('Hello from server!')
 })
+let count: number = 0
 app.get('/counter', (req: Request, res: Response): void => {
-	let count = 1
+	count++
 	// Övning: se till att count ökas varje gång man skickar request till /counter
 	res.status(200).send({ value: count })
+})
+app.post('/counter', (req: Request, res: Response): void => {
+	count = 0
+	res.sendStatus(200)
+	// res.status(200)  <- fel
+})
+type GreetingParams = {
+	name: string;
+}
+type GreetingResponse = {
+	salutation: string;
+}
+app.get<GreetingParams, GreetingResponse>('/greeting/:name', (req, res): void => {
+	const name = req.params.name
+	res.send({ salutation: `Hej, ${name}!` })
 })
 
 
