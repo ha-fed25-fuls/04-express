@@ -1,6 +1,7 @@
 // ---- Imports ---- //
 import express, { type Express, type Request, type RequestHandler, type Response } from 'express'
 import carsRouter from './routes/cars.ts'
+import fruitsRouter from './routes/fruits.ts'
 
 // ---- Inställningar ---- //
 // app är ett objekt som representerar vår server
@@ -56,6 +57,7 @@ app.get<GreetingParams, GreetingResponse>('/greeting/:name', (req, res): void =>
 
 
 app.use('/cars', carsRouter)
+app.use('/fruits', fruitsRouter)
 
 
 
