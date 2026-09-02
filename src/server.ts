@@ -28,27 +28,64 @@ app.get('/', (req: Request, res: Response): void => {
 	// res används för att skicka ett svar till klienten
     res.status(200).send('Hello from server!')
 })
+
 let count: number = 0
 app.get('/counter', (req: Request, res: Response): void => {
 	count++
-	// Övning: se till att count ökas varje gång man skickar request till /counter
 	res.status(200).send({ value: count })
 })
 app.post('/counter', (req: Request, res: Response): void => {
 	count = 0
-	res.sendStatus(200)
-	// res.status(200)  <- fel
+	res.sendStatus(200)  // skickar statuskoden till klienten
+	// res.status(200)  // sätter statuskoden, men skickar inget
 })
+
+// Tala om vilka URL-parametrar som requestet behöver
 type GreetingParams = {
 	name: string;
 }
+// Response body, talar om hur svaret som endpointen skickar ska se ut
 type GreetingResponse = {
 	salutation: string;
 }
 app.get<GreetingParams, GreetingResponse>('/greeting/:name', (req, res): void => {
-	const name = req.params.name
+	const name = req.params.name  // name är en URL-parameter
 	res.send({ salutation: `Hej, ${name}!` })
 })
+
+/*
+3a Lägg till en endpoint GET "/cars" som svarar med en lista med namn på bilmodeller. Listan ska vara tom från början.
+3b Lägg till en endpoint POST "/cars/:model" som lägger till en bilmodell till listan, med hjälp av en URL-parameter. Exempel:
+GET /cars → "[]"
+POST /cars/volvo
+POST /cars/ferrarri
+GET /cars → "['volvo', 'ferrarri']"
+
+3c Lägg till en endpoint DELETE "/cars" som rensar listan igen.
+*/
+type CarModel = string
+const carModels: CarModel[] = []
+// app.get<Params, ResBody, ReqBody, ReqQuery>
+app.get<{}, CarModel[]>('/cars', (req, res) => {
+	res.status(200).send(carModels)
+	// status(200) är default, man kan utelämna den
+})
+
+type ModelParam = {
+	model: string;
+}
+app.post<ModelParam, void>('/cars/:model', (req, res) => {
+	const model: string = req.params.model
+	carModels.push(model)
+	res.sendStatus(201)  // 201==Created
+})
+
+app.delete<{}, void>('/cars', (req, res) => {
+	// carModels = []     // mer intuitivt
+	carModels.length = 0  // helt galet men det är tillåtet i JavaScript
+	res.sendStatus(204)  // 204==No content
+})
+
 
 
 // ---- Starta server ---- //
