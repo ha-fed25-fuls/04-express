@@ -45,6 +45,16 @@ router.get<IdParam, Fruit | void>('/:id', (req, res) => {
 	// 2. id är inte korrekt (går inte att konvertera till ett number) -> 400 bad request
 	// 3. id är korrekt och vi hittar ett objekt -> 200
 
+	if( isNaN(id) ) {
+		res.sendStatus(400)
+		return
+	}
+	const maybeFruit: Fruit | undefined = fruits.find(f => f.id === id)
+	if( maybeFruit === undefined ) {
+		res.sendStatus(404)
+	} else {
+		res.status(200).send(maybeFruit)
+	}
 })
 
 
