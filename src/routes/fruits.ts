@@ -5,19 +5,26 @@ Detta ska göras:
 + Datan - array i koden
 + skapa Router-objekt + export default
 + GET
-+ POST
++ POST (även validering)
 + DELETE
 + PUT
 */
 import express, { type Router } from 'express'
+import * as z from 'zod'
 const router: Router = express.Router()
 
 
-type Fruit = {
-	id: number;
-	name: string;
-	price: number;
-}
+const FruitSchema = z.object({
+	id: z.number(),
+	name: z.string(),
+	price: z.number()
+})
+type Fruit = z.infer<typeof FruitSchema>
+// type Fruit = {
+// 	id: number;
+// 	name: string;
+// 	price: number;
+// }
 
 const fruits: Fruit[] = [
     { id: 1, name: "Äpple", price: 15 },
@@ -32,6 +39,7 @@ const fruits: Fruit[] = [
 
 //  GET /fruits  -> svara med listan på alla frukter
 router.get<{}, Fruit[]>('/', (req, res) => {
+	// Användningsområde för querystring - om vi vill kunna svara med fruktlistan sorterad i en viss ordning
 	res.status(200).send(fruits)
 })
 
@@ -57,5 +65,23 @@ router.get<IdParam, Fruit | void>('/:id', (req, res) => {
 	}
 })
 
+
+router.post<{}, void, Fruit>('/', (req, res) => {
+	// KOM IHÅG att lägga till express.json() i server.ts
+	// Express har inte inbyggt stöd för body, vi måste lägga till det
+	try {
+		// Se upp - parse kan misslyckas!
+		// Om vi inte fångar Error blir det statuskod 500
+		const fruit = z.parse(FruitSchema, req.body)
+		// här är fruit okej, vi fortsätter...
+		fruits.push(fruit)
+		res.sendStatus(201)  // 201 Created
+
+	} catch(error) {
+		// Det gick inte, dvs status 400 Bad request
+		// Vill man vara snäll mot frontend kan man skicka tillbaka ett beskrivande felmeddelande
+		res.sendStatus(400)
+	}
+})
 
 export default router

@@ -10,13 +10,15 @@ const port: number = 3001
 
 
 // ---- Middleware ---- //
+app.use(express.json())
+
 const logger: RequestHandler = (req, res, next) => {
 	// Om vi behöver någon information om requestet, kolla i "req"
 	// Om vi ska skicka svar till klienten, använd "res"
 	// Passa vidare till app.get med next()
 
 	// Tips! Lägg till vilken tid requestet kom
-	console.log(`${req.method}  ${req.path}`)
+	console.log(`${req.method}  ${req.path}`, req.body)
 	next()  // om vi glömmer next, får vi "timeout" fel
 }
 app.use(logger)
