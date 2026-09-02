@@ -1,5 +1,6 @@
 // ---- Imports ---- //
 import express, { type Express, type Request, type RequestHandler, type Response } from 'express'
+import carsRouter from './routes/cars.ts'
 
 // ---- Inställningar ---- //
 // app är ett objekt som representerar vår server
@@ -53,38 +54,8 @@ app.get<GreetingParams, GreetingResponse>('/greeting/:name', (req, res): void =>
 	res.send({ salutation: `Hej, ${name}!` })
 })
 
-/*
-3a Lägg till en endpoint GET "/cars" som svarar med en lista med namn på bilmodeller. Listan ska vara tom från början.
-3b Lägg till en endpoint POST "/cars/:model" som lägger till en bilmodell till listan, med hjälp av en URL-parameter. Exempel:
-GET /cars → "[]"
-POST /cars/volvo
-POST /cars/ferrarri
-GET /cars → "['volvo', 'ferrarri']"
 
-3c Lägg till en endpoint DELETE "/cars" som rensar listan igen.
-*/
-type CarModel = string
-const carModels: CarModel[] = []
-// app.get<Params, ResBody, ReqBody, ReqQuery>
-app.get<{}, CarModel[]>('/cars', (req, res) => {
-	res.status(200).send(carModels)
-	// status(200) är default, man kan utelämna den
-})
-
-type ModelParam = {
-	model: string;
-}
-app.post<ModelParam, void>('/cars/:model', (req, res) => {
-	const model: string = req.params.model
-	carModels.push(model)
-	res.sendStatus(201)  // 201==Created
-})
-
-app.delete<{}, void>('/cars', (req, res) => {
-	// carModels = []     // mer intuitivt
-	carModels.length = 0  // helt galet men det är tillåtet i JavaScript
-	res.sendStatus(204)  // 204==No content
-})
+app.use('/cars', carsRouter)
 
 
 
