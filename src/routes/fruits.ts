@@ -84,4 +84,12 @@ router.post<{}, void, Fruit>('/', (req, res) => {
 	}
 })
 
+
+// Detta återstår för att det ska bli ett komplett REST-API:
+// DELETE /fruits/:id  - validera id, se GET /fruits/:id
+// PUT /fruits/:id - validera både id och request body. Möjliga statuskoder: 200, 400, 404
+
+// Kom ihåg att du kan använda console.log inuti endpoints:
+// console.log('METOD /url', req.params, req.body)
+
 export default router
